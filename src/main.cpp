@@ -1,3 +1,4 @@
+#include <asio/awaitable.hpp>
 #include <asio/co_spawn.hpp>
 #include <asio/detached.hpp>
 #include <asio/io_context.hpp>
@@ -5,6 +6,7 @@
 #include <asio/signal_set.hpp>
 #include <asio/write.hpp>
 #include <cstdio>
+#include <exception>
 
 using asio::awaitable;
 using asio::co_spawn;
@@ -18,12 +20,20 @@ namespace this_coro = asio::this_coro;
   asio::use_awaitable_t(__FILE__, __LINE__, __PRETTY_FUNCTION__)
 #endif
 
+awaitable<void> stream(tcp::socket socket) {
+  try {
+
+  } catch (std::exception &err) {
+  }
+}
+
 awaitable<void> echo(tcp::socket socket) {
   try {
     char data[1024];
     for (;;) {
       std::size_t n =
           co_await socket.async_read_some(asio::buffer(data), use_awaitable);
+
       co_await async_write(socket, asio::buffer(data, n), use_awaitable);
     }
   } catch (std::exception &e) {
